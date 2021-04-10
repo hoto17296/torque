@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+
+  torque:
+    build: .
+    ports:
+      - 8432:8432
+    depends_on:
+      - influxdb
+    environment:
+      INFLUXDB_HOST: influxdb
+      INFLUXDB_USER: telegraf
+      INFLUXDB_PASSWORD: secretpassword
+      INFLUXDB_DB: db0
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb:/var/lib/influxdb
+    environment:
+      INFLUXDB_DB: db0
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: supersecretpassword
+      INFLUXDB_USER: telegraf
+      INFLUXDB_USER_PASSWORD: secretpassword
+
+  chronograf:
+    image: chronograf:1.8
+    ports:
+      - 8087:8888
+    volumes:
+      - chronograf:/var/lib/chronograf
+    environment:
+      INFLUXDB_DB: db0
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: supersecretpassword
+      INFLUXDB_USER: telegraf
+      INFLUXDB_USER_PASSWORD: secretpassword
+
+volumes:
+  influxdb:
+  chronograf:
